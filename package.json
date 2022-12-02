@@ -11,6 +11,7 @@
     "deploy": "yarn build && rm -rf docs; cp -r dist docs"
   },
   "dependencies": {
+    "chess.js": "^1.0.0-alpha.0",
     "core-js": "^3.6.4",
     "vue": "^2.6.11",
     "vue-chessboard": "^0.6.6"
