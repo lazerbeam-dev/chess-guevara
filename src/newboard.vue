@@ -9,10 +9,6 @@ export default {
   name: 'newboard',
   extends: chessboard,
   methods: {
-    undo() {
-      this.game.undo()
-      this.board.set({fen: this.game.fen()})
-    },
     userPlay() {
       return (orig, dest) => {
         if (this.isPromotion(orig, dest)) {
@@ -26,12 +22,9 @@ export default {
         this.aiNextMove()
       };
     },
-    evalBoard(fen, moves) {
+    evalBoard(boardstate, moves) {
+      let fen =boardstate.fen()
       fen = fen.split(" ")[0]
-      if(moves.length == 0){
-        return - 1000
-      }
-
       let pawns = (fen.split("p").length - 1) - (fen.split("P").length -1)
       let knights = (fen.split("n").length - 1) - (fen.split("N").length -1)
       let bishops = (fen.split("b").length - 1) - (fen.split("B").length -1)
@@ -42,33 +35,59 @@ export default {
       return evaluation
       //let pawns = fen.split("p").length - 1
     },
-    applyMoveToFen(fen, move){
-
-      let fenlines= fen.split("/");
-      for(var i = 0; i< fenlines.length; i++){
-        if(i + 1 == move[move.length -1]){
-          console.log(move[move.length -1], i+1)
-  
+    minimax(boardstate, depth, maximizingPlayer){
+      let availableMoves = boardstate.moves()
+      if(depth == 0 || boardstate.isGameOver()){
+        console.log(boardstate.ascii())
+        return this.evalBoard(boardstate, availableMoves)
+      }
+      if(maximizingPlayer){
+        let value = -10000
+        console.log("maximizing from", availableMoves)
+        for(let i = 0; i < availableMoves.length; i++){
+          let clonedBoard = new Chess(boardstate.fen())
+          clonedBoard.move(availableMoves[i])
+          let minimax = this.minimax(clonedBoard, depth -1, true)
+          value = Math.max(value, minimax)
         }
+        return value
+      }
+      else{ //minimizing
+        let value = 10000
+        console.log("minimizing from", availableMoves)
+        for(let i = 0; i < availableMoves.length; i++){
+          let clonedBoard = new Chess(boardstate.fen())
+          clonedBoard.move(availableMoves[i])
+          let minimax = this.minimax(clonedBoard, depth -1, false)
+          value = Math.min(value, minimax)
+        }
+        return value
       }
     },
-    calculateBestMove(state, moves){
-      console.log(moves)
+    calculateBestMove(moves, fen){
+      var bestSoFar = -10000
+      let moveReturn = null
       for(var i =0; i< moves.length; i++){
-        let AIChess = new Chess(this.game.fen())
+        let AIChess = new Chess(fen)
         AIChess.move(moves[i]);
-        console.log(AIChess.ascii())
-        //his.evalBoard(fen, )
+        let evaluation = this.minimax(AIChess, 1, false)
+        console.log(evaluation, moves[i])
+        if(evaluation > bestSoFar){
+          bestSoFar = evaluation
+          moveReturn = moves[i]
+          //console.log(evaluation, moves[i])
+        }
       }
+      return moveReturn
     },
     aiNextMove() {
       let moves = this.game.moves()
+      let fen = this.game.fen()
+      console.log(moves)
+      let bestMove = this.calculateBestMove(moves, fen)
 
-      this.calculateBestMove(this.game.fen(), moves)
-
-      this.$emit('showInfo', this.evalBoard(this.game.fen(), moves))
-      let randomMove = moves[Math.floor(Math.random() * moves.length)]
-      this.game.move(randomMove)
+      this.$emit('showInfo', this.evalBoard(this.game, moves))
+      this.game.move(bestMove)
 
       this.board.set({
         fen: this.game.fen(),
