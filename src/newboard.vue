@@ -35,31 +35,36 @@ export default {
       return evaluation
       //let pawns = fen.split("p").length - 1
     },
-    minimax(boardstate, depth, maximizingPlayer){
+    minimax(boardstate, depth, maximizingPlayer, alpha, beta){
       let availableMoves = boardstate.moves()
       if(depth == 0 || boardstate.isGameOver()){
-        console.log(boardstate.ascii())
         return this.evalBoard(boardstate, availableMoves)
       }
       if(maximizingPlayer){
         let value = -10000
-        console.log("maximizing from", availableMoves)
         for(let i = 0; i < availableMoves.length; i++){
           let clonedBoard = new Chess(boardstate.fen())
           clonedBoard.move(availableMoves[i])
           let minimax = this.minimax(clonedBoard, depth -1, true)
           value = Math.max(value, minimax)
+          if(value >= beta){
+            break;
+          }
+          alpha = Math.max(alpha, value)
         }
         return value
       }
       else{ //minimizing
         let value = 10000
-        console.log("minimizing from", availableMoves)
         for(let i = 0; i < availableMoves.length; i++){
           let clonedBoard = new Chess(boardstate.fen())
           clonedBoard.move(availableMoves[i])
           let minimax = this.minimax(clonedBoard, depth -1, false)
           value = Math.min(value, minimax)
+          if(value <= alpha){
+            break
+          }
+          beta = Math.min(beta, value)
         }
         return value
       }
@@ -70,8 +75,7 @@ export default {
       for(var i =0; i< moves.length; i++){
         let AIChess = new Chess(fen)
         AIChess.move(moves[i]);
-        let evaluation = this.minimax(AIChess, 1, false)
-        console.log(evaluation, moves[i])
+        let evaluation = this.minimax(AIChess, 2, false)
         if(evaluation > bestSoFar){
           bestSoFar = evaluation
           moveReturn = moves[i]
