@@ -22,7 +22,11 @@ export default {
         this.aiNextMove()
       };
     },
-    evalBoard(boardstate, moves) {
+    evalBoard(boardstate, maximizingPlayer, moves) {
+      if(boardstate.isCheckmate()){
+        console.log("checkmate max", maximizingPlayer)
+        return maximizingPlayer ? -1000 : 1000
+      }
       let fen =boardstate.fen()
       fen = fen.split(" ")[0]
       let pawns = (fen.split("p").length - 1) - (fen.split("P").length -1)
@@ -30,15 +34,16 @@ export default {
       let bishops = (fen.split("b").length - 1) - (fen.split("B").length -1)
       let rooks = (fen.split("r").length - 1) - (fen.split("R").length -1)
       let queens = (fen.split("q").length - 1) - (fen.split("Q").length -1)
-
       let evaluation = pawns + (3 * knights) + (3 * bishops) + (5 * rooks) + (9 * queens)
-      return evaluation
+      // bonus for number of moves
+      evaluation += (maximizingPlayer ? 1 : -1) * moves.length * 0.02
+      return evaluation 
       //let pawns = fen.split("p").length - 1
     },
     minimax(boardstate, depth, maximizingPlayer, alpha, beta){
       let availableMoves = boardstate.moves()
       if(depth == 0 || boardstate.isGameOver()){
-        return this.evalBoard(boardstate, availableMoves)
+        return this.evalBoard(boardstate, maximizingPlayer, availableMoves)
       }
       if(maximizingPlayer){
         let value = -10000
@@ -90,7 +95,7 @@ export default {
       console.log(moves)
       let bestMove = this.calculateBestMove(moves, fen)
 
-      this.$emit('showInfo', this.evalBoard(this.game, moves))
+      //this.$emit('showInfo', evalua)
       this.game.move(bestMove)
 
       this.board.set({
