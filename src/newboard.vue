@@ -36,7 +36,7 @@ export default {
       let queens = (fen.split("q").length - 1) - (fen.split("Q").length -1)
       let evaluation = pawns + (3 * knights) + (3 * bishops) + (5 * rooks) + (9 * queens)
       // bonus for number of moves
-      evaluation += (maximizingPlayer ? 1 : -1) * moves.length * 0.02
+      evaluation += (maximizingPlayer ? 1 : -1) * moves.length * 0.01
       return evaluation 
       //let pawns = fen.split("p").length - 1
     },
@@ -50,10 +50,10 @@ export default {
         for(let i = 0; i < availableMoves.length; i++){
           let clonedBoard = new Chess(boardstate.fen())
           clonedBoard.move(availableMoves[i])
-          let minimax = this.minimax(clonedBoard, depth -1, true)
+          let minimax = this.minimax(clonedBoard, depth -1, false, alpha, beta)
           value = Math.max(value, minimax)
           if(value >= beta){
-            break;
+            break
           }
           alpha = Math.max(alpha, value)
         }
@@ -64,7 +64,7 @@ export default {
         for(let i = 0; i < availableMoves.length; i++){
           let clonedBoard = new Chess(boardstate.fen())
           clonedBoard.move(availableMoves[i])
-          let minimax = this.minimax(clonedBoard, depth -1, false)
+          let minimax = this.minimax(clonedBoard, depth -1, true, alpha, beta)
           value = Math.min(value, minimax)
           if(value <= alpha){
             break
@@ -80,7 +80,7 @@ export default {
       for(var i =0; i< moves.length; i++){
         let AIChess = new Chess(fen)
         AIChess.move(moves[i]);
-        let evaluation = this.minimax(AIChess, 2, false)
+        let evaluation = this.minimax(AIChess, 2, false, -10000, 10000)
         if(evaluation > bestSoFar){
           bestSoFar = evaluation
           moveReturn = moves[i]
