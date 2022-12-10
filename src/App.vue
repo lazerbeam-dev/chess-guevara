@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     
-    <h1>Chessica </h1>
+    <h1><img class="icon" src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.craftsmanspace.com%2Fsites%2Fdefault%2Ffiles%2Ffree-patterns%2FErnesto_Che_Guevara.jpg&f=1&nofb=1&ipt=dfe79c7f156c5dd1dd75fc3359c239a9f0ed0fd3a658d92815a34af9a99ee275&ipo=images"> Chess Guevara</h1> 
       <newboard @showInfo="x => showInfo(x)"/>
         {{ this.positionInfo }}
   </div>
@@ -49,3 +49,9 @@ export default {
   }
 }
 </script>
+<style>
+.icon{
+  width: 60px;
+  height: 60px;
+}
+</style>

@@ -1,7 +1,7 @@
 
 <script>
 import { stat } from 'fs'
-import { chessboard }  from 'vue-chessboard'
+import { chessboard, move }  from 'vue-chessboard'
 import bus from './bus.js'
 import { Chess } from 'chess.js'
 
@@ -35,8 +35,7 @@ export default {
       let rooks = (fen.split("r").length - 1) - (fen.split("R").length -1)
       let queens = (fen.split("q").length - 1) - (fen.split("Q").length -1)
       let evaluation = pawns + (3 * knights) + (3 * bishops) + (5 * rooks) + (9 * queens)
-      // bonus for number of moves
-      evaluation += (maximizingPlayer ? 1 : -1) * moves.length * 0.01
+
       return evaluation 
       //let pawns = fen.split("p").length - 1
     },
@@ -77,6 +76,9 @@ export default {
     calculateBestMove(moves, fen){
       var bestSoFar = -10000
       let moveReturn = null
+      const randomizeBest = true
+      let candidateMoves = []
+
       for(var i =0; i< moves.length; i++){
         let AIChess = new Chess(fen)
         AIChess.move(moves[i]);
@@ -84,8 +86,17 @@ export default {
         if(evaluation > bestSoFar){
           bestSoFar = evaluation
           moveReturn = moves[i]
+          candidateMoves = []
+          candidateMoves.push(moves[i])
           //console.log(evaluation, moves[i])
         }
+        else if(evaluation == bestSoFar){
+          candidateMoves.push(moves[i])
+        }
+      }
+      if(candidateMoves.length > 1){
+        console.log("picking from ", candidateMoves.length, " candidatemoves")
+        moveReturn = candidateMoves[candidateMoves.length * Math.random() | 0]
       }
       return moveReturn
     },
