@@ -23,7 +23,7 @@ export default {
         if (this.isPromotion(orig, dest)) {
           this.promoteTo = this.onPromotion()
         }
-        this.game.move({ from: orig, to: dest, promotion: this.promoteTo }) // promote to queen for simplicity
+        this.game.move({from: orig, to: dest, promotion: this.promoteTo}) // promote to queen for simplicity
         this.board.set({
           fen: this.game.fen()
         })
@@ -107,16 +107,18 @@ export default {
         console.log("picking from ", candidateMoves.length, " candidatemoves")
         moveReturn = candidateMoves[candidateMoves.length * Math.random() | 0]
       }
-      return moveReturn
+      return [moveReturn, "test"]
     },
     aiNextMove() {
       let moves = this.game.moves()
       let fen = this.game.fen()
       console.log(moves)
-      let bestMove, moveInfo = this.calculateBestMove(moves, fen)
+      let [bestMove, moveInfo] = this.calculateBestMove(moves, fen)
       console.log(bus)
       bus.$emit('AImove', [bestMove, moveInfo])
       this.game.move(bestMove)
+      console.log(this)
+      console.log(this.toColor())
 
       this.board.set({
         fen: this.game.fen(),
@@ -124,7 +126,7 @@ export default {
         movable: {
           color: this.toColor(),
           dests: this.possibleMoves(),
-          events: { after: this.userPlay() },
+          events: { after: this.userPlay()},
         }
       });
     },
@@ -138,14 +140,14 @@ export default {
       console.log(this.game)
       this.game.load(newFen)
       this.board.set({
-          fen: this.game.fen(),
-          turnColor: this.toColor(),
+        fen: this.game.fen(),
+        turnColor: "white",
         movable: {
           color: this.toColor(),
           dests: this.possibleMoves(),
-          events: { after: this.userPlay() },
+          events: { after: this.userPlay()},
         }
-        })
+      });
     }
   },
   mounted() {

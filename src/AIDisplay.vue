@@ -24,6 +24,11 @@ export default {
             "check yourself before you shrek yourself, swamp face",
             "check... check... ah one two, revolution comin though"
             ],
+        losses: [
+            "you play well, capitalist, but revolution is inevitable!"
+        ],
+        wins: ["victory is mine, capitist, now let's play one to decide who gets to rule Canada"],
+
         time: null
     }   
   },
@@ -34,7 +39,9 @@ export default {
     ExplainCalculation(moveInfo){
         
     },
-    
+    GameEnd(){
+        
+    }
   },
   created() {
     bus.$on('AImove', (move, moveInfo) => {
