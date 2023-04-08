@@ -2,7 +2,7 @@
 A minimax chess AI with alpha beta pruning made using chess.js and vue-chessboard...
 </p>
 
-I am abandoning this project to make Space Goatboy, it is left here in case anyone wants to pick up where I left off, which is just that far - AB pruning AI with simple piece eval and 3 search depth. What I learned, and the next steps (from my perspective) would be:
+The next steps (from my perspective) would be:
 
 1. Improve evaluation function: with perfect evaluation function low depth is necessary, most chess engines have piece * position evaluation tables, where each type of piece has an 8 * 8 grid of numerical values, that basically instruct each piece to go to good squares for it - knights to middle, bishops to long diagonal but not quite in the corner, pawns table is interesting and hard to describe - with these 'instruction' weights lower than material value so that tactics prevail. https://www.chessprogramming.org/Piece-Square_Tables
 
